@@ -1,0 +1,38 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+
+# env files
+.env
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local database (libSQL/SQLite)
+/local.db
+/local.db-*
+*.sqlite
+
+# drizzle
+/drizzle
+
+# MCP設定（Turso APIトークン＝倉庫の合鍵が入る。絶対にコミットしない）
+mcp.json
+set-turso-token.py
+set-google-keys.py
+.playwright-mcp/

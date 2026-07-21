@@ -1,0 +1,14 @@
+{
+  "_comment": "EP31: Turso MCP サーバー設定の雛形。この .example をコピーして mcp.json を作り、実際の値を入れる。mcp.json は .gitignore 済み（絶対にコミットしない）",
+  "mcpServers": {
+    "mcp-turso-cloud": {
+      "command": "npx",
+      "args": ["-y", "mcp-turso-cloud"],
+      "env": {
+        "TURSO_API_TOKEN": "your-turso-api-token",
+        "TURSO_ORGANIZATION": "your-organization-name",
+        "TURSO_DEFAULT_DATABASE": "optional-default-database"
+      }
+    }
+  }
+}
