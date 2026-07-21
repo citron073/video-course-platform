@@ -36,3 +36,4 @@ mcp.json
 set-turso-token.py
 set-google-keys.py
 .playwright-mcp/
+vercel-env-paste.txt
