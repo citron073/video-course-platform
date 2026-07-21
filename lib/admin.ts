@@ -60,10 +60,76 @@ export function normalizeSlug(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/**
+ * http / https の URL かどうか。空文字・その他スキーム(ftp等)は false。
+ * サムネイルURL欄の検証に使う。
+ */
+export function isValidHttpUrl(url: string): boolean {
+  const value = (url ?? "").trim();
+  if (!value) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * YouTube の URL（各種形式）や裸のIDから 11文字の動画IDを取り出す。
+ * - 空 / 空白のみ → ""（動画なし）
+ * - watch?v= / youtu.be/ / youtube-nocookie.com/embed/ / youtube.com/embed/ に対応
+ * - 裸の11文字ID → そのまま
+ * - どれにも当てはまらなければ trim した入力をそのまま返す（後段でそのまま保存）
+ */
+export function extractYouTubeId(input: string): string {
+  const value = (input ?? "").trim();
+  if (!value) return "";
+
+  const idPattern = /^[A-Za-z0-9_-]{11}$/;
+
+  // 裸の11文字ID
+  if (idPattern.test(value)) return value;
+
+  try {
+    const url = new URL(value);
+    const host = url.hostname.replace(/^www\./, "");
+
+    // https://youtu.be/XXXX
+    if (host === "youtu.be") {
+      const id = url.pathname.split("/").filter(Boolean)[0] ?? "";
+      if (idPattern.test(id)) return id;
+    }
+
+    // youtube.com / youtube-nocookie.com
+    if (host === "youtube.com" || host === "youtube-nocookie.com") {
+      // watch?v=XXXX
+      const v = url.searchParams.get("v");
+      if (v && idPattern.test(v)) return v;
+
+      // /embed/XXXX, /v/XXXX, /shorts/XXXX
+      const segments = url.pathname.split("/").filter(Boolean);
+      const marker = segments.findIndex((s) =>
+        ["embed", "v", "shorts"].includes(s)
+      );
+      if (marker !== -1) {
+        const id = segments[marker + 1] ?? "";
+        if (idPattern.test(id)) return id;
+      }
+    }
+  } catch {
+    // URL でなければ下に落ちる
+  }
+
+  // 取れなければ入力をそのまま返す
+  return value;
+}
+
 export type CourseInput = {
   title: string;
   slug: string;
   description?: string | null;
+  thumbnailUrl?: string | null;
 };
 
 export type ValidationResult =
@@ -73,11 +139,13 @@ export type ValidationResult =
 /**
  * 講座作成フォームの検証。
  * タイトル必須／スラッグは形式チェック（重複チェックはDB側の unique 制約に任せる）。
+ * thumbnailUrl は任意。空なら null、非空なら http(s) URL のみ許可。
  */
 export function validateCourseInput(input: {
   title?: string | null;
   slug?: string | null;
   description?: string | null;
+  thumbnailUrl?: string | null;
 }): ValidationResult {
   const errors: string[] = [];
 
@@ -96,6 +164,17 @@ export function validateCourseInput(input: {
     );
   }
 
+  // サムネイルURL（任意）。入力があれば http(s) URL であることをチェック。
+  const rawThumb = (input.thumbnailUrl ?? "").trim();
+  let thumbnailUrl: string | null = null;
+  if (rawThumb) {
+    if (!isValidHttpUrl(rawThumb)) {
+      errors.push("サムネイルは http(s) の画像URLを入力してください");
+    } else {
+      thumbnailUrl = rawThumb;
+    }
+  }
+
   if (errors.length > 0) return { ok: false, errors };
 
   return {
@@ -104,6 +183,57 @@ export function validateCourseInput(input: {
       title,
       slug,
       description: (input.description ?? "").trim() || null,
+      thumbnailUrl,
     },
   };
+}
+
+export type SectionInputValue = { title: string };
+
+export type SectionValidationResult =
+  | { ok: true; value: SectionInputValue }
+  | { ok: false; errors: string[] };
+
+/**
+ * セクション（章）入力の検証。タイトル必須・100字以内。
+ */
+export function validateSectionInput(input: {
+  title?: string | null;
+}): SectionValidationResult {
+  const errors: string[] = [];
+
+  const title = (input.title ?? "").trim();
+  if (!title) errors.push("セクション名を入力してください");
+  if (title.length > 100) errors.push("セクション名は100文字以内にしてください");
+
+  if (errors.length > 0) return { ok: false, errors };
+
+  return { ok: true, value: { title } };
+}
+
+export type LessonInputValue = { title: string; youtubeId: string };
+
+export type LessonValidationResult =
+  | { ok: true; value: LessonInputValue }
+  | { ok: false; errors: string[] };
+
+/**
+ * レッスン入力の検証。タイトル必須・200字以内。
+ * youtubeId は extractYouTubeId を通し、任意（空文字OK＝動画なし）。
+ */
+export function validateLessonInput(input: {
+  title?: string | null;
+  youtubeId?: string | null;
+}): LessonValidationResult {
+  const errors: string[] = [];
+
+  const title = (input.title ?? "").trim();
+  if (!title) errors.push("レッスン名を入力してください");
+  if (title.length > 200) errors.push("レッスン名は200文字以内にしてください");
+
+  const youtubeId = extractYouTubeId(input.youtubeId ?? "");
+
+  if (errors.length > 0) return { ok: false, errors };
+
+  return { ok: true, value: { title, youtubeId } };
 }

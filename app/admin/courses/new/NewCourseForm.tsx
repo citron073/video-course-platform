@@ -62,10 +62,29 @@ export function NewCourseForm({ blobEnabled }: { blobEnabled: boolean }) {
 
       <div>
         <label
+          htmlFor="thumbnailUrl"
+          className="block text-sm font-medium text-white"
+        >
+          サムネイル画像URL
+        </label>
+        <input
+          id="thumbnailUrl"
+          name="thumbnailUrl"
+          type="url"
+          placeholder="https://... の画像URL（任意）"
+          className={inputClass}
+        />
+        <p className="mt-1 text-xs text-white/50">
+          画像のURLを直接指定できます（今すぐ使えます）。
+        </p>
+      </div>
+
+      <div>
+        <label
           htmlFor="thumbnail"
           className="block text-sm font-medium text-white"
         >
-          サムネイル画像
+          サムネイル画像ファイル
         </label>
         {blobEnabled ? (
           <>
@@ -77,7 +96,7 @@ export function NewCourseForm({ blobEnabled }: { blobEnabled: boolean }) {
               className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-500 file:px-3 file:py-1.5 file:text-xs file:text-white hover:file:bg-indigo-400"
             />
             <p className="mt-1 text-xs text-white/50">
-              PNG / JPEG / WebP / GIF・5MB以内。未選択なら「No Image」になります。
+              PNG / JPEG / WebP / GIF・5MB以内。ファイルを選ぶと上のURLより優先されます。
             </p>
           </>
         ) : (

@@ -1,8 +1,13 @@
 import { notFound } from "next/navigation";
 import LessonNav from "@/components/LessonNav";
+import LessonSidebar from "@/components/LessonSidebar";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
-import { getAdjacentLessons, getLessonById } from "@/db/queries";
-import { COURSE_SLUG } from "@/lib/config";
+import {
+  getAdjacentLessons,
+  getCourseSlugByLessonId,
+  getCourseWithStructure,
+  getLessonById,
+} from "@/db/queries";
 
 export default async function LessonPage({
   params,
@@ -16,20 +21,46 @@ export default async function LessonPage({
   const lesson = await getLessonById(id);
   if (!lesson) notFound();
 
-  const { prev, next } = await getAdjacentLessons(COURSE_SLUG, id);
+  // 講座は固定せず、レッスンから解決する（管理画面で作った任意slugの講座に対応）
+  const slug = await getCourseSlugByLessonId(id);
+  if (!slug) notFound();
+
+  const course = await getCourseWithStructure(slug);
+  if (!course) notFound();
+
+  const { prev, next } = await getAdjacentLessons(slug, id);
+
+  const hasVideo = Boolean(lesson.youtubeId && lesson.youtubeId.trim());
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-6 sm:px-8 sm:py-10">
-      <YouTubeEmbed youtubeId={lesson.youtubeId} title={lesson.title} />
+    <div className="md:grid md:h-[calc(100vh-57px)] md:grid-cols-[300px_1fr]">
+      <LessonSidebar structure={course} />
 
-      <h1 className="mt-6 text-2xl font-bold">{lesson.title}</h1>
-      {lesson.description && (
-        <p className="mt-3 text-white/70 leading-relaxed whitespace-pre-wrap">
-          {lesson.description}
-        </p>
-      )}
+      <main className="md:h-[calc(100vh-57px)] md:overflow-y-auto">
+        <article className="mx-auto max-w-4xl px-4 py-6 sm:px-8 sm:py-10">
+          {hasVideo ? (
+            <YouTubeEmbed youtubeId={lesson.youtubeId} title={lesson.title} />
+          ) : (
+            <div className="grid aspect-video w-full place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-center">
+              <div>
+                <p className="text-lg font-medium text-white/70">動画準備中</p>
+                <p className="mt-1 text-sm text-white/40">
+                  管理画面からYouTube動画を設定できます。
+                </p>
+              </div>
+            </div>
+          )}
 
-      <LessonNav prev={prev} next={next} />
-    </article>
+          <h1 className="mt-6 text-2xl font-bold text-white">{lesson.title}</h1>
+          {lesson.description && (
+            <p className="mt-3 whitespace-pre-wrap leading-relaxed text-white/70">
+              {lesson.description}
+            </p>
+          )}
+
+          <LessonNav prev={prev} next={next} />
+        </article>
+      </main>
+    </div>
   );
 }

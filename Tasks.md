@@ -52,6 +52,7 @@
 - [ ] EP34: 自分のGoogleアカウントで登録後 `npm run make-admin -- <自分のメール>` で admin 化
 - [x] EP35: サムネイル画像の置き場（Vercel Blob）— 鍵待ちでも動く設計（`isBlobEnabled`）で実装。`lib/blob.ts` / `lib/blob-validate.ts`(+test15) / フォームinput / 一覧表示(No Image) / `.env.example`追記。build成功・test48 green — 2026-07-21
   - [ ] EP35: `BLOB_READ_WRITE_TOKEN` 発行（Vercel Storage → Blob）→ `.env.local` 設定 → 実アップロード動作確認（AIには渡さない・人間の手作業）
+- [x] 管理画面フル化: コース編集（タイトル/説明/サムネURL/公開）＋セクション/レッスンのCRUD。サムネはURL入力主体（Blobファイルは来れば優先）。動画なしレッスンは `youtubeId=""`（スキーマ変更なし）で表現し受講画面は「動画準備中」表示。`lib/admin.ts`(+isValidHttpUrl/extractYouTubeId/validateSection/validateLesson/thumbnail対応)・test66 green・build成功 — 2026-07-22
 
 ## 未着手 / 進行中（優先度: 高 = 公開までに必須）
 

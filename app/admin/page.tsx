@@ -101,15 +101,24 @@ export default async function AdminPage() {
                   </div>
                 )}
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-white">
+                <Link
+                  href={`/admin/courses/${course.id}`}
+                  className="group min-w-0 flex-1"
+                >
+                  <p className="truncate font-medium text-white group-hover:text-indigo-300">
                     {course.title}
                   </p>
                   <p className="mt-1 truncate font-mono text-xs text-white/40">
                     /{course.slug}
                   </p>
-                </div>
+                </Link>
                 <div className="flex shrink-0 items-center gap-3">
+                  <Link
+                    href={`/admin/courses/${course.id}`}
+                    className="rounded-lg border border-white/15 px-3 py-1 text-xs text-white/80 transition hover:bg-white/5"
+                  >
+                    編集
+                  </Link>
                   <span
                     className={`rounded-full px-3 py-1 text-xs ${
                       course.published
