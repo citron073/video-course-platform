@@ -3,9 +3,18 @@ import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "動画講座",
-  description: "YouTube限定公開動画を使った動画講座プラットフォーム",
-  robots: { index: false, follow: false }, // 限定公開のため検索インデックスを抑止
+  metadataBase: new URL("https://video-course-platform-theta.vercel.app"),
+  title: "動画講座プラットフォーム",
+  description: "YouTube動画で学べる、セクション別の動画講座プラットフォーム。",
+  robots: { index: false, follow: false }, // 練習/限定公開のため検索インデックスを抑止
+  // OGP: URLを共有したときにタイトル・説明のカードが出るようにする（EP35-36 公開の仕上げ）
+  openGraph: {
+    title: "動画講座プラットフォーム",
+    description: "YouTube動画で学べる、セクション別の動画講座プラットフォーム。",
+    type: "website",
+    locale: "ja_JP",
+    siteName: "動画講座プラットフォーム",
+  },
 };
 
 export default function RootLayout({
