@@ -37,6 +37,9 @@
 
 - [x] EP34（クラウド）: tani-cloud を admin化 → 講座作成・公開をクラウドDBで動作確認 — 2026-07-21
 
+- [x] EP36準備: git初期化→Public Repo作成→push（https://github.com/citron073/video-course-platform） — 2026-07-21
+- [ ] EP36: Vercelアカウント作成→インポート→環境変数設定→デプロイ→公開URL取得（本人・docs/EP36_デプロイ手順.md）
+
 ## 未着手（たにさん本人の作業＝鍵の受け渡し）
 
 - [ ] **EP31: Turso アカウント作成 → Platform API Token 発行 → `mcp.json` に記入**（AIには渡さない）
