@@ -14,17 +14,17 @@ export default async function NewCoursePage() {
 
   return (
     <main className="mx-auto max-w-xl px-6 py-12">
-      <h1 className="text-2xl font-bold">コース作成</h1>
-      <p className="mt-2 text-sm text-gray-500">
+      <h1 className="text-2xl font-bold text-white">コース作成</h1>
+      <p className="mt-2 text-sm text-white/60">
         コース → セクション → レッスン の3階層。まずはコースを1つ作ります。
       </p>
 
-      <div className="mt-8">
+      <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <NewCourseForm blobEnabled={isBlobEnabled} />
       </div>
 
       <p className="mt-8 text-sm">
-        <Link href="/admin" className="text-gray-500 hover:underline">
+        <Link href="/admin" className="text-white/50 hover:text-white/80">
           ← 管理画面へ戻る
         </Link>
       </p>

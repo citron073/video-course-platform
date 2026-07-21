@@ -6,6 +6,9 @@ import { signIn, signUp } from "@/lib/auth-client";
 
 type Mode = "login" | "signup";
 
+const inputClass =
+  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 transition focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400";
+
 export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
@@ -42,13 +45,15 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm space-y-6">
-      <div className="flex rounded-lg border border-gray-200 p-1 text-sm">
+    <div className="w-full space-y-6">
+      <div className="flex rounded-lg border border-white/10 bg-white/5 p-1 text-sm">
         <button
           type="button"
           onClick={() => setMode("login")}
-          className={`flex-1 rounded-md py-2 ${
-            mode === "login" ? "bg-gray-900 text-white" : "text-gray-600"
+          className={`flex-1 rounded-md py-2 transition ${
+            mode === "login"
+              ? "bg-indigo-500 text-white"
+              : "text-white/60 hover:text-white"
           }`}
         >
           ログイン
@@ -56,8 +61,10 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
         <button
           type="button"
           onClick={() => setMode("signup")}
-          className={`flex-1 rounded-md py-2 ${
-            mode === "signup" ? "bg-gray-900 text-white" : "text-gray-600"
+          className={`flex-1 rounded-md py-2 transition ${
+            mode === "signup"
+              ? "bg-indigo-500 text-white"
+              : "text-white/60 hover:text-white"
           }`}
         >
           新規登録
@@ -68,7 +75,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
         <button
           type="button"
           onClick={handleGoogle}
-          className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-gray-300 bg-white py-3 text-sm font-medium text-gray-800 hover:bg-gray-50"
+          className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-gray-300 bg-white py-3 text-sm font-medium text-gray-800 transition hover:bg-gray-100"
         >
           <svg className="h-4 w-4" viewBox="0 0 48 48" aria-hidden="true">
             <path
@@ -91,19 +98,18 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
           Googleで続行
         </button>
       ) : (
-        <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+        <p className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-3 text-xs text-amber-200">
           Googleログインは未設定です。GCPで発行した
           <code className="mx-1">GOOGLE_CLIENT_ID</code>と
-          <code className="mx-1">GOOGLE_CLIENT_SECRET</code>を
-          <code className="mx-1">.env.local</code>
-          に入れて再起動すると、ここに「Googleで続行」ボタンが出ます。
+          <code className="mx-1">GOOGLE_CLIENT_SECRET</code>を設定すると、
+          ここに「Googleで続行」ボタンが出ます。
         </p>
       )}
 
-      <div className="flex items-center gap-3 text-xs text-gray-400">
-        <div className="h-px flex-1 bg-gray-200" />
+      <div className="flex items-center gap-3 text-xs text-white/40">
+        <div className="h-px flex-1 bg-white/10" />
         またはメールで
-        <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-px flex-1 bg-white/10" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -114,7 +120,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
             placeholder="お名前"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className={inputClass}
           />
         )}
         <input
@@ -123,7 +129,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
           placeholder="メールアドレス"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          className={inputClass}
         />
         <input
           type="password"
@@ -132,11 +138,11 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
           placeholder="パスワード（8文字以上）"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          className={inputClass}
         />
 
         {error && (
-          <p className="rounded-lg bg-red-50 p-3 text-xs text-red-700">
+          <p className="rounded-lg border border-red-400/20 bg-red-400/10 p-3 text-xs text-red-200">
             {error}
           </p>
         )}
@@ -144,7 +150,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-gray-900 py-3 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded-lg bg-indigo-500 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:opacity-50"
         >
           {loading
             ? "処理中…"
